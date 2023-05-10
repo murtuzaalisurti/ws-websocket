@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            padding: 2rem;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        #inputContain {
+            position: fixed;
+            bottom: 2rem;
+            right: 0;
+            left: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        #messages {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+            height: calc(100vw - 20%);
+            overflow-y: auto;
+        }
+
+        p:not([data-clientConnected]):not([data-clientDisconnected]) {
+            padding: 1.2rem 1.5rem;
+            width: fit-content;
+            max-width: 40rem;
+            background-color: antiquewhite;
+            border-top-right-radius: 1.2rem;
+            border-top-left-radius: 1.2rem;
+        }
+        
+        p:not([data-clientConnected]):not([data-clientDisconnected]):not([data-me]) {
+            border-bottom-right-radius: 1.2rem;
+            align-self: flex-start;
+        }
+        
+        p[data-me] {
+            align-self: flex-end;
+            border-bottom-left-radius: 1.2rem;
+            border-bottom-right-radius: 0;
+        }
+
+        p[data-clientConnected] {
+            align-self: center;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>WebSocket</h1>
+    <section id="inputContain">
+        <textarea type="text" id="inputMessage"></textarea>
+        <button id="sendMessage">Send</button>
+    </section>
+    <section id="messages">
+        <h4>Messages</h4>
+    </section>
+    <script>
+        const ws = new WebSocket("ws://localhost:5000")
+        const messages = document.querySelector("#messages");
+        let firstLoad = true
+        let me;
+
+        function focusLast() {
+            messages.scrollTop = messages.scrollHeight
+            console.log(messages.scrollTop, messages.scrollHeight, messages.clientHeight);
+        }
+
+        document.querySelector("#sendMessage").addEventListener("click", () => {
+            let messageContain = document.createElement("p")
+            messageContain.innerText = document.querySelector("#inputMessage").value
+            messageContain.setAttribute("data-me", true)
+            messages.appendChild(messageContain)
+
+            ws.send(document.querySelector("#inputMessage").value)
+            focusLast();
+        })
+
+        ws.onmessage = (message) => {
+            
+            const messageObject = JSON.parse(message.data)
+            console.log(messageObject);
+
+            if (firstLoad) {
+                me = messageObject.from
+                firstLoad = false
+            }
+
+            if (messageObject.data) {
+                let messageContain = document.createElement("p")
+
+                if (messageObject.from && me) {
+                    messageObject.from === me ? (
+                        messageContain.setAttribute("data-me", true)
+                    ) : (
+                        messageContain.removeAttribute("data-me"),
+
+                        messageObject.type.isConnectionMessage === true ? (
+                            messageContain.setAttribute("data-clientConnected", true)
+                        ) : (
+                            messageContain.removeAttribute("data-clientConnected")
+                        ),
+
+                        messageObject.type.isDisconnectionMessage === true ? (
+                            messageContain.setAttribute("data-clientDisconnected", true)
+                        ) : (
+                            messageContain.removeAttribute("data-clientDisconnected")
+                        )
+                    )
+                }
+                messageContain.innerText = messageObject.data
+                document.querySelector("#messages").appendChild(messageContain)
+            }
+
+            focusLast();
+        }
+    </script>
+</body>
+
+</html>
