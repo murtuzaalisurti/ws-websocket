@@ -15,7 +15,7 @@ app.get('/', (req, res) => {
      * 
      * ! for commonjs module `path.join(__dirname, 'public')`
      */
-    
+
     res.sendFile('index.html', { root: fileURLToPath(new URL('public', import.meta.url)) })
 })
 

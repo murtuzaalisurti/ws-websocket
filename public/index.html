@@ -49,12 +49,12 @@
             border-top-right-radius: 1.2rem;
             border-top-left-radius: 1.2rem;
         }
-        
+
         p:not([data-clientConnected]):not([data-clientDisconnected]):not([data-me]) {
             border-bottom-right-radius: 1.2rem;
             align-self: flex-start;
         }
-        
+
         p[data-me] {
             align-self: flex-end;
             border-bottom-left-radius: 1.2rem;
@@ -98,7 +98,7 @@
         })
 
         ws.onmessage = (message) => {
-            
+
             const messageObject = JSON.parse(message.data)
             console.log(messageObject);
 
