@@ -24,11 +24,12 @@ wsServer.on('connection', function conn(ws, req) {
     const currentClient = req.headers['sec-websocket-key']
     console.log(`\n\n${currentClient} just got connected\nclients connected: ${wsServer.clients.size}\n`)
 
-    /** @type {SendMessage} */
+    /** 
+     * @type {SendMessage}
+     * ? broadcast to all clients except the current client who is sending the message
+     */
     function broadcast(message) {
-        /**
-            * ? to broadcast to all clients except the current client who is sending the message
-        */
+        
         const stringifiedMessage = JSON.stringify(message)
 
         wsServer.clients.forEach(client => {
@@ -43,7 +44,10 @@ wsServer.on('connection', function conn(ws, req) {
         })
     }
 
-    /** @type {SendMessage} */
+    /** 
+     * @type {SendMessage}
+     * ? send the "id" to the client on connection
+     */
     function sendToCurrentClient(message) {
         ws.send(JSON.stringify(message), (err) => {
             if (err) {
@@ -56,9 +60,6 @@ wsServer.on('connection', function conn(ws, req) {
 
     ws.on('error', console.error)
 
-    /**
-     * ? to send the "id" to the client on connection
-     */
     sendToCurrentClient({
         from: currentClient,
         data: null,
