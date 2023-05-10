@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Anonymous</title>
     <style>
         * {
             margin: 0;
@@ -68,16 +68,18 @@
 </head>
 
 <body>
-    <h1>WebSocket</h1>
+    <h1>Anonymous</h1>
     <section id="inputContain">
         <textarea type="text" id="inputMessage"></textarea>
         <button id="sendMessage">Send</button>
     </section>
     <section id="messages">
-        <h4>Messages</h4>
+        <h4>;)</h4>
     </section>
     <script>
-        const ws = new WebSocket("ws://localhost:5000")
+        const protocol = window.location.protocol.includes('https') ? 'wss': 'ws'
+        console.log(location.host);
+        const ws = new WebSocket(`${protocol}://${location.hostname}:5000`)
         const messages = document.querySelector("#messages");
         let firstLoad = true
         let me;
@@ -87,14 +89,22 @@
             console.log(messages.scrollTop, messages.scrollHeight, messages.clientHeight);
         }
 
-        document.querySelector("#sendMessage").addEventListener("click", () => {
+        function sendMessage() {
             let messageContain = document.createElement("p")
             messageContain.innerText = document.querySelector("#inputMessage").value
             messageContain.setAttribute("data-me", true)
             messages.appendChild(messageContain)
-
+    
             ws.send(document.querySelector("#inputMessage").value)
             focusLast();
+        }
+
+        document.querySelector("#sendMessage").addEventListener("click", () => {
+            sendMessage()
+        })
+
+        document.addEventListener("keypress", (e) => {
+            e.key === "Enter" && sendMessage()
         })
 
         ws.onmessage = (message) => {
