@@ -2,11 +2,7 @@ import express from "express"
 import { fileURLToPath } from "url"
 
 const app = express()
-
-app.use((req, res, next) => {
-    express.static("public")
-    next()
-})
+app.use(express.static('public'))
 
 app.get('/', (req, res) => {
 
