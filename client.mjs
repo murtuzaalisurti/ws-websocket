@@ -9,13 +9,11 @@ app.use((req, res, next) => {
 })
 
 app.get('/', (req, res) => {
-
     /**
      * ? or you can do `path.join(dirname(fileURLToPath(import.meta.url)), 'public')`
      * 
      * ! for commonjs module `path.join(__dirname, 'public')`
      */
-
     res.sendFile('index.html', { root: fileURLToPath(new URL('public', import.meta.url)) })
 })
 
