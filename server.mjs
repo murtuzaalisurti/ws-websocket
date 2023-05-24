@@ -8,6 +8,8 @@
  * @typedef {object} Message
  * @property {string} from
  * @property {string | null} data
+ * @property {object} [headers]
+ * @property {string} [httpVersion]
  * @property {MessageType} type
  */
 
@@ -63,6 +65,8 @@ wsServer.on('connection', function conn(ws, req) {
     sendToCurrentClient({
         from: currentClient,
         data: null,
+        headers: req.headers,
+        httpVersion: req.httpVersion,
         type: {
             isConnectionMessage: false
         }
