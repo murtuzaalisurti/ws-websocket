@@ -1,5 +1,5 @@
 import express from "express"
-import { fileURLToPath } from "url"
+import { fileURLToPath } from "node:url"
 
 const app = express()
 app.use(express.static('public'))
